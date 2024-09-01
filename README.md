@@ -8,7 +8,8 @@ This document describes the low-level design of an image processing system built
 
 ## System Design
 
-![System Design Diagram](https://apidog.com/api/v1/projects/651904/resources/344741/image-preview)
+![System Design Diagram](https://github.com/user-attachments/assets/8da49434-57ac-4b00-8ba6-b9a8cfbbf9f4)
+
 
 ### The system consists of the following components:
 - **API Server**:
@@ -35,25 +36,27 @@ This document describes the low-level design of an image processing system built
 **Batch Schema**
  ``` ts
  {
-    _id: string;
-    status: 'completed' | 'in progress' | 'in queue' | 'failed',;
-    s3Key: string;
-    message?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
+    _id: string,
+    status: 'completed' | 'in progress' | 'in queue' | 'failed',
+    s3Key: string, 
+    message?: string,
+    createdAt?: Date,
+    updatedAt?: Date
 }
 ```
 
 **Product Schema**
-```ts
-	_id: string;
-    serial_no: number;
-    product_name: string;
-    batch_id: string;
-    input_image_urls: string[];
-    output_image_urls: string[];
-    createdAt?: Date;
-    updatedAt?: Date;
+``` ts
+ {
+    _id: string,
+    serial_no: number,
+    product_name: string,
+    batch_id: string,
+    input_image_urls: string[],
+    output_image_urls: string[],
+    createdAt?: Date,
+    updatedAt?: Date,
+}
 ```
 
 ## Asynchronous Workers
