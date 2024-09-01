@@ -5,7 +5,7 @@ import { SandboxedJob, type Job } from 'bullmq'
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3"
 import { Upload } from '@aws-sdk/lib-storage';
 import { parseStream } from '@fast-csv/parse'
-import Trasformer from '../utils/compress'
+import Compressor from '../utils/compress'
 
 import config from '../config'
 
@@ -67,8 +67,10 @@ const parseNCompress = async (bucket: string, data: Record<any, any>): Promise<v
 				throw new Error(`Invalid row at line ${rowNumber}`)
 			})
 			.on('data', async (row: InputCsvSchemaType) => {
-				const outputUrls = await Promise.all(row['Input Image Urls'].map(async (url, idx): Promise<string> => {
-					const compressedBuffer = await Trasformer(url)
+				const outputUrls: string[] = []
+				for (let idx = 0; idx < row['Input Image Urls'].length; idx++) {
+					const url = row['Input Image Urls'][idx]
+					const compressedBuffer = await Compressor(url)
 					const s3upload = new Upload({
 						client: s3,
 						params: {
@@ -80,8 +82,8 @@ const parseNCompress = async (bucket: string, data: Record<any, any>): Promise<v
 						}
 					})
 					const output = await s3upload.done()
-					return output.Location as string
-				}))
+					outputUrls.push(output.Location as string)
+				}
 
 				const product = await productService.create({
 					batch_id: data._id,
